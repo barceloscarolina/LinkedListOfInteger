@@ -91,13 +91,13 @@ public class LinkedListOfInteger {
 
     public Integer get(int index) {
 
-        if (index >= size()) {
+        if (index < 0 || index >= count) {
 
             throw new IndexOutOfBoundsException("ERRO" + index);
 
         }
 
-        if (index == size() - 1) {
+        if (index == count - 1) {
 
             return tail.element;
 
@@ -122,17 +122,11 @@ public class LinkedListOfInteger {
 
         Node aux = head;
 
-        int count_aux = 0;
-
-        while (aux != null) {
-
+        for (int i = 0; i < count; i++) {
             if (aux.element.equals(element)) {
-                return count_aux;
+                return i;
             }
-
             aux = aux.next;
-            count_aux++;
-
         }
 
         return -1;
@@ -140,7 +134,7 @@ public class LinkedListOfInteger {
     }
 
     public void add(int index, Integer element) {
-        if (index >= size() || index < 0) {
+        if (index > size() || index < 0) {
 
             throw new IndexOutOfBoundsException("ERRO" + index);
 
@@ -149,13 +143,13 @@ public class LinkedListOfInteger {
         Node n = new Node(element);
 
         if (index == 0) {
-            if (head == null) {
-                head = n;
+            if (count == 0) {
                 tail = n;
+            } else {
+                n.next = head;
             }
-
-            n.next = head;
             head = n;
+
         } else if (index == count) {
             tail.next = n;
             tail = n;
@@ -207,6 +201,7 @@ public class LinkedListOfInteger {
                 }
 
                 count--;
+                return true;
             }
 
             ant = ant.next;
@@ -220,7 +215,7 @@ public class LinkedListOfInteger {
 
     public Integer set(int index, Integer element) {
 
-        if (index >= size() || index < 0) {
+        if (index >= count || index < 0) {
 
             throw new IndexOutOfBoundsException("ERRO" + index);
 
@@ -234,22 +229,24 @@ public class LinkedListOfInteger {
 
             return deleted_element;
 
-        } else {
-
-            Node aux = head;
-
-            for (int i = 0; i < index; i++) {
-
-                aux = aux.next;
-
-            }
-
-            Integer deleted_element = aux.element;
-
-            aux.element = element;
-
-            return deleted_element;
         }
+
+        Node aux = head;
+
+        int c = 0;
+
+        while (c < index) {
+
+            aux = aux.next;
+            c++;
+
+        }
+
+        Integer deleted_element = aux.element;
+
+        aux.element = element;
+
+        return deleted_element;
 
     }
 
@@ -273,26 +270,20 @@ public class LinkedListOfInteger {
         }
 
         Node ant = head;
-        Node aux = head.next;
 
-        for (int i = 1; i < index; i++) {
-
-            if (aux == tail) {
-                Integer deleted_element = tail.element;
-                tail = ant;
-                tail.next = null;
-                count--;
-                return deleted_element;
-
-            }
-
+        for (int i = 0; i < index - 1; i++) {
             ant = ant.next;
-            aux = aux.next;
-
         }
 
-        Integer deleted_element = aux.element;
-        ant.next = aux.next;
+        Integer deleted_element = ant.next.element;
+
+        if (index == count - 1) {
+            tail = ant;
+            tail.next = null;
+        } else {
+            ant.next = ant.next.next;
+        }
+
         count--;
         return deleted_element;
 
